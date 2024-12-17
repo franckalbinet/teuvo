@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "teuvo"
+  site-url: "https://franckalbinet.github.io/teuvo"
+  description: "Self-Organzing Map"
+  repo-branch: main
+  repo-url: "https://github.com/franckalbinet/teuvo"
