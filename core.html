@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="SOM class implementation">
+
+<title>core – teuvo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-7c6d40aa23c779922b80e0578a9e8972.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="core – teuvo">
+<meta property="og:description" content="SOM class implementation">
+<meta property="og:image" content="https://franckalbinet.github.io/teuvo/00_core_files/figure-html/cell-36-output-2.png">
+<meta property="og:site_name" content="teuvo">
+<meta property="og:image:height" content="290">
+<meta property="og:image:width" content="789">
+<meta name="twitter:title" content="core – teuvo">
+<meta name="twitter:description" content="SOM class implementation">
+<meta name="twitter:image" content="https://franckalbinet.github.io/teuvo/00_core_files/figure-html/cell-36-output-2.png">
+<meta name="twitter:image-height" content="290">
+<meta name="twitter:image-width" content="789">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">teuvo</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./core.html">Source</a></li><li class="breadcrumb-item"><a href="./core.html">core</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Teuvo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./workflow/how-was-it-created.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">How was it created?</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Source</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">core</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#som" id="toc-som" class="nav-link active" data-scroll-target="#som">SOM</a></li>
+  <li><a href="#exp_sched" id="toc-exp_sched" class="nav-link" data-scroll-target="#exp_sched">exp_sched</a></li>
+  <li><a href="#scheduler" id="toc-scheduler" class="nav-link" data-scroll-target="#scheduler">Scheduler</a></li>
+  <li><a href="#format_metrics_html" id="toc-format_metrics_html" class="nav-link" data-scroll-target="#format_metrics_html">format_metrics_html</a></li>
+  <li><a href="#setup_error_plots" id="toc-setup_error_plots" class="nav-link" data-scroll-target="#setup_error_plots">setup_error_plots</a></li>
+  <li><a href="#update_error_plots" id="toc-update_error_plots" class="nav-link" data-scroll-target="#update_error_plots">update_error_plots</a></li>
+  <li><a href="#som.fit" id="toc-som.fit" class="nav-link" data-scroll-target="#som.fit">SOM.fit</a></li>
+  <li><a href="#som.quantization_error" id="toc-som.quantization_error" class="nav-link" data-scroll-target="#som.quantization_error">SOM.quantization_error</a></li>
+  <li><a href="#som.topographic_error" id="toc-som.topographic_error" class="nav-link" data-scroll-target="#som.topographic_error">SOM.topographic_error</a></li>
+  <li><a href="#som.transform" id="toc-som.transform" class="nav-link" data-scroll-target="#som.transform">SOM.transform</a></li>
+  <li><a href="#som.predict" id="toc-som.predict" class="nav-link" data-scroll-target="#som.predict">SOM.predict</a></li>
+  <li><a href="#som.umatrix" id="toc-som.umatrix" class="nav-link" data-scroll-target="#som.umatrix">SOM.umatrix</a></li>
+  <li><a href="#som.plot_umatrix" id="toc-som.plot_umatrix" class="nav-link" data-scroll-target="#som.plot_umatrix">SOM.plot_umatrix</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/franckalbinet/teuvo/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./core.html">Source</a></li><li class="breadcrumb-item"><a href="./core.html">core</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">core</h1>
+</div>
+
+<div>
+  <div class="description">
+    SOM class implementation
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L20" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="som" class="level3">
+<h3 class="anchored" data-anchor-id="som">SOM</h3>
+<blockquote class="blockquote">
+<pre><code> SOM (grid_sz:tuple, input_dim:int, init:str='random', dist_fn=&lt;function
+      &lt;lambda&gt;&gt;)</code></pre>
+</blockquote>
+<p><em>Initialize a Self-Organizing Map with given grid size and input dimension</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>grid_sz</td>
+<td>tuple</td>
+<td></td>
+<td>grid size</td>
+</tr>
+<tr class="even">
+<td>input_dim</td>
+<td>int</td>
+<td></td>
+<td>input dimension</td>
+</tr>
+<tr class="odd">
+<td>init</td>
+<td>str</td>
+<td>random</td>
+<td>initialization method</td>
+</tr>
+<tr class="even">
+<td>dist_fn</td>
+<td>function</td>
+<td><lambda></lambda></td>
+<td>distance function</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>None</strong></td>
+<td></td>
+<td><strong>initialize the SOM</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-3" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dist_fn <span class="op">=</span> <span class="kw">lambda</span> x, ws: np.linalg.norm(ws<span class="op">-</span>x, axis<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-4" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SOM:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                 grid_sz:<span class="bu">tuple</span>, <span class="co"># grid size</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                 input_dim:<span class="bu">int</span>, <span class="co"># input dimension</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                 init:<span class="bu">str</span><span class="op">=</span><span class="st">'random'</span>, <span class="co"># initialization method</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                <span class="co">#  dist_fn=np.linalg.norm # distance function</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                 dist_fn<span class="op">=</span>dist_fn <span class="co"># distance function</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                 )<span class="op">-&gt;</span><span class="va">None</span>: <span class="co"># initialize the SOM</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">"Initialize a Self-Organizing Map with given grid size and input dimension"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        store_attr()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.weights <span class="op">=</span> <span class="va">None</span>  <span class="co"># Will be initialized when fitting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L106" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="exp_sched" class="level3">
+<h3 class="anchored" data-anchor-id="exp_sched">exp_sched</h3>
+<blockquote class="blockquote">
+<pre><code> exp_sched (start_val, end_val, i, n_steps)</code></pre>
+</blockquote>
+<div id="cell-6" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _initialize_weights_pca(<span class="va">self</span>:SOM, X:np.ndarray)<span class="op">-&gt;</span>np.ndarray:</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Initialize weights using PCA of the input data"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    pca <span class="op">=</span> PCA(n_components<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    pca.fit(X)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create grid coordinates and scale by eigenvalues</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="va">self</span>.grid_sz[<span class="dv">0</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, n) <span class="op">*</span> np.sqrt(pca.explained_variance_[<span class="dv">0</span>])</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, n) <span class="op">*</span> np.sqrt(pca.explained_variance_[<span class="dv">1</span>])</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create the grid</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    alpha_grid, beta_grid <span class="op">=</span> np.meshgrid(alpha, beta)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Initialize weights as linear combination of first two PCs</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (alpha_grid[..., np.newaxis] <span class="op">*</span> pca.components_[<span class="dv">0</span>] <span class="op">+</span> </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            beta_grid[..., np.newaxis] <span class="op">*</span> pca.components_[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-7" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _initialize_weights(<span class="va">self</span>:SOM, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                        X:np.ndarray<span class="op">=</span><span class="va">None</span>, <span class="co"># data matrix</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                        method:<span class="bu">str</span><span class="op">=</span><span class="st">'random'</span> <span class="co"># initialization method</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                        )<span class="op">-&gt;</span>np.ndarray: <span class="co"># weights matrix</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Initialize weights using either random or PCA initialization"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> method <span class="op">==</span> <span class="st">'random'</span>:</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.random.randn(<span class="op">*</span><span class="va">self</span>.grid_sz, <span class="va">self</span>.input_dim)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> method <span class="op">==</span> <span class="st">'pca'</span>:</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> X <span class="kw">is</span> <span class="va">None</span>: </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Data matrix X required for PCA initialization"</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>._initialize_weights_pca(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-8" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _find_bmu(<span class="va">self</span>:SOM, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>              x:np.ndarray, <span class="co"># input vector</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>              )<span class="op">-&gt;</span><span class="bu">tuple</span>: <span class="co"># coordinates of the best matching unit</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Find coordinates of Best Matching Unit for input x"</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    distances <span class="op">=</span> <span class="va">self</span>.dist_fn(x, <span class="va">self</span>.weights)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.unravel_index(np.argmin(distances), <span class="va">self</span>.grid_sz)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-9" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _grid_distances(<span class="va">self</span>:SOM, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                    bmu_pos:<span class="bu">tuple</span> <span class="co"># coordinates of the best matching unit</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                    )<span class="op">-&gt;</span>np.ndarray: <span class="co"># grid distances</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Calculate grid distances from BMU position"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    rows_idx, cols_idx <span class="op">=</span> np.ogrid[<span class="dv">0</span>:<span class="va">self</span>.grid_sz[<span class="dv">0</span>], <span class="dv">0</span>:<span class="va">self</span>.grid_sz[<span class="dv">1</span>]]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (bmu_pos[<span class="dv">0</span>] <span class="op">-</span> rows_idx)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (bmu_pos[<span class="dv">1</span>] <span class="op">-</span> cols_idx)<span class="op">**</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-10" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _neighborhood_function(<span class="va">self</span>:SOM, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                           grid_dist:np.ndarray, <span class="co"># grid distances</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                           sigma:<span class="bu">float</span> <span class="co"># neighborhood radius</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                           )<span class="op">-&gt;</span>np.ndarray: <span class="co"># neighborhood function values</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Calculate neighborhood function values"</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(<span class="op">-</span>grid_dist<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>sigma<span class="op">**</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-11" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _update_weights(<span class="va">self</span>:SOM, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                    x:np.ndarray, <span class="co"># input vector</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                    learning_rate:<span class="bu">float</span>, <span class="co"># learning rate</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                    sigma:<span class="bu">float</span> <span class="co"># neighborhood radius</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                    )<span class="op">-&gt;</span><span class="va">None</span>: <span class="co"># update weights</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Update weights for a single input vector"</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    bmu_pos <span class="op">=</span> <span class="va">self</span>._find_bmu(x)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    grid_dist <span class="op">=</span> <span class="va">self</span>._grid_distances(bmu_pos)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    neighborhood <span class="op">=</span> <span class="va">self</span>._neighborhood_function(grid_dist, sigma)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.weights <span class="op">+=</span> learning_rate <span class="op">*</span> neighborhood[..., np.newaxis] <span class="op">*</span> (x <span class="op">-</span> <span class="va">self</span>.weights)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-12" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> exp_sched(start_val, end_val, i, n_steps):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    decay <span class="op">=</span> <span class="op">-</span>np.log(end_val<span class="op">/</span>start_val)<span class="op">/</span>n_steps</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> start_val <span class="op">*</span> np.exp(<span class="op">-</span>decay <span class="op">*</span> i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L111" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="scheduler" class="level3">
+<h3 class="anchored" data-anchor-id="scheduler">Scheduler</h3>
+<blockquote class="blockquote">
+<pre><code> Scheduler (start_val, end_val, step_size, n_samples, n_epochs,
+            decay_fn=&lt;function exp_sched&gt;)</code></pre>
+</blockquote>
+<p><em>Initialize self. See help(type(self)) for accurate signature.</em></p>
+<div id="cell-14" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Scheduler:</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, start_val, end_val, step_size, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                 n_samples, n_epochs, decay_fn<span class="op">=</span>exp_sched):</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        store_attr()</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.current_step <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.current_value <span class="op">=</span> start_val</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.total_steps <span class="op">=</span> (n_samples <span class="op">*</span> n_epochs) <span class="op">//</span> step_size</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, total_samples):</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> total_samples <span class="op">%</span> <span class="va">self</span>.step_size <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.current_value <span class="op">=</span> <span class="va">self</span>.decay_fn(</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.start_val, <span class="va">self</span>.end_val, </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.current_step, <span class="va">self</span>.total_steps</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.current_step <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.current_value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L129" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="format_metrics_html" class="level3">
+<h3 class="anchored" data-anchor-id="format_metrics_html">format_metrics_html</h3>
+<blockquote class="blockquote">
+<pre><code> format_metrics_html (epochs_data:list)</code></pre>
+</blockquote>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>epochs_data</td>
+<td>list</td>
+<td>list of tuples: [(epoch, qe, te), …]</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-16" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> format_metrics_html(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    epochs_data:<span class="bu">list</span>, <span class="co"># list of tuples: [(epoch, qe, te), ...]</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Format the metrics as an HTML table</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># epochs_data should be a list of tuples: [(epoch, qe, te), ...]</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> <span class="st">''</span>.join([</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"""</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;tr&gt;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="ss">                &lt;td style="padding: 3px"&gt;</span><span class="sc">{</span>epoch<span class="op">+</span><span class="dv">1</span><span class="sc">:3d}</span><span class="ss">&lt;/td&gt;</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="ss">                &lt;td style="padding: 3px"&gt;</span><span class="sc">{</span>qe<span class="sc">:8.4f}</span><span class="ss">&lt;/td&gt;</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="ss">                &lt;td style="padding: 3px"&gt;</span><span class="sc">{</span>te<span class="sc">:8.4f}</span><span class="ss">&lt;/td&gt;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;/tr&gt;</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="ss">        """</span> <span class="cf">for</span> epoch, qe, te <span class="kw">in</span> epochs_data</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f"""</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;div style="font-family: monospace; margin: 10px"&gt;</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;h4&gt;Training Progress&lt;/h4&gt;</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;table style="border-collapse: collapse"&gt;</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;tr style="border-bottom: 2px solid #ddd"&gt;</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="ss">                &lt;th style="font-weight: bold; padding: 5px; text-align: left"&gt;Epoch&lt;/th&gt;</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="ss">                &lt;th style="font-weight: bold; padding: 5px; text-align: right"&gt;QE&lt;/th&gt;</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="ss">                &lt;th style="font-weight: bold; padding: 5px; text-align: right"&gt;TE&lt;/th&gt;</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;/tr&gt;</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="ss">            </span><span class="sc">{</span>rows<span class="sc">}</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;/table&gt;</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;/div&gt;</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="ss">    """</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L159" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="setup_error_plots" class="level3">
+<h3 class="anchored" data-anchor-id="setup_error_plots">setup_error_plots</h3>
+<blockquote class="blockquote">
+<pre><code> setup_error_plots (**kwargs)</code></pre>
+</blockquote>
+<p><em>Setup error plots</em></p>
+<div id="cell-18" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> setup_error_plots(<span class="op">**</span>kwargs):</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Setup error plots"</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    kwargs.get(<span class="st">'figsize'</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>kwargs.get(<span class="st">'figsize'</span>, (<span class="dv">8</span>, <span class="dv">3</span>)), dpi<span class="op">=</span>kwargs.get(<span class="st">'dpi'</span>, <span class="dv">100</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    ax1.set_title(<span class="st">'Quantization Error'</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    ax2.set_title(<span class="st">'Topographic Error'</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    ax1.set_xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    ax2.set_xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    ax1.grid(<span class="va">True</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    ax2.grid(<span class="va">True</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fig, ax1, ax2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L173" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="update_error_plots" class="level3">
+<h3 class="anchored" data-anchor-id="update_error_plots">update_error_plots</h3>
+<blockquote class="blockquote">
+<pre><code> update_error_plots (fig:matplotlib.figure.Figure,
+                     ax1:matplotlib.axes._axes.Axes,
+                     ax2:matplotlib.axes._axes.Axes, epochs:list,
+                     qe_errors:list, te_errors:list,
+                     display_handle:&lt;function display&gt;)</code></pre>
+</blockquote>
+<p><em>Update error plots</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>fig</td>
+<td>Figure</td>
+<td>figure</td>
+</tr>
+<tr class="even">
+<td>ax1</td>
+<td>Axes</td>
+<td>quantization error plot</td>
+</tr>
+<tr class="odd">
+<td>ax2</td>
+<td>Axes</td>
+<td>topographic error plot</td>
+</tr>
+<tr class="even">
+<td>epochs</td>
+<td>list</td>
+<td>epochs</td>
+</tr>
+<tr class="odd">
+<td>qe_errors</td>
+<td>list</td>
+<td>quantization errors</td>
+</tr>
+<tr class="even">
+<td>te_errors</td>
+<td>list</td>
+<td>topographic errors</td>
+</tr>
+<tr class="odd">
+<td>display_handle</td>
+<td>display</td>
+<td>display handle</td>
+</tr>
+</tbody>
+</table>
+<div id="cell-20" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_error_plots(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    fig:plt.Figure, <span class="co"># figure</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    ax1:plt.Axes, <span class="co"># quantization error plot</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    ax2:plt.Axes, <span class="co"># topographic error plot</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    epochs:<span class="bu">list</span>, <span class="co"># epochs</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    qe_errors:<span class="bu">list</span>, <span class="co"># quantization errors</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    te_errors:<span class="bu">list</span>, <span class="co"># topographic errors</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    display_handle:display <span class="co"># display handle</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Update error plots"</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    colors <span class="op">=</span> [<span class="st">'#1c9e76'</span>, <span class="st">'#d95f01'</span>]</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    ax1.clear()</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    ax2.clear()</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    ax1.plot(epochs, qe_errors, colors[<span class="dv">0</span>])</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    ax2.plot(epochs, te_errors, colors[<span class="dv">1</span>])</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    ax1.set_title(<span class="st">'Quantization Error (mse)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    ax2.set_title(<span class="st">'Topographic Error (%)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    ax1.set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    ax2.set_xlabel(<span class="st">'Epoch'</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    ax1.grid(<span class="va">True</span>)</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    ax2.grid(<span class="va">True</span>)</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    display_handle.update(fig)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L203" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="som.fit" class="level3">
+<h3 class="anchored" data-anchor-id="som.fit">SOM.fit</h3>
+<blockquote class="blockquote">
+<pre><code> SOM.fit (X:numpy.ndarray, n_epochs:int=20,
+          lr_scheduler:__main__.Scheduler=None,
+          sigma_scheduler:__main__.Scheduler=None, shuffle:bool=True,
+          verbose:bool=True, **kwargs)</code></pre>
+</blockquote>
+<p><em>Train the SOM on input data X</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td></td>
+<td>data matrix</td>
+</tr>
+<tr class="even">
+<td>n_epochs</td>
+<td>int</td>
+<td>20</td>
+<td>number of epochs</td>
+</tr>
+<tr class="odd">
+<td>lr_scheduler</td>
+<td>Scheduler</td>
+<td>None</td>
+<td>learning rate scheduler</td>
+</tr>
+<tr class="even">
+<td>sigma_scheduler</td>
+<td>Scheduler</td>
+<td>None</td>
+<td>neighborhood radius scheduler</td>
+</tr>
+<tr class="odd">
+<td>shuffle</td>
+<td>bool</td>
+<td>True</td>
+<td>shuffle data</td>
+</tr>
+<tr class="even">
+<td>verbose</td>
+<td>bool</td>
+<td>True</td>
+<td>verbose</td>
+</tr>
+<tr class="odd">
+<td>kwargs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>tuple</strong></td>
+<td></td>
+<td><strong>tuple of weights, quantization errors, and topographic errors</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-22" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit(<span class="va">self</span>:SOM, </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>        X:np.ndarray, <span class="co"># data matrix</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        n_epochs:<span class="bu">int</span><span class="op">=</span><span class="dv">20</span>, <span class="co"># number of epochs</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>        lr_scheduler:Scheduler<span class="op">=</span><span class="va">None</span>, <span class="co"># learning rate scheduler</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        sigma_scheduler:Scheduler<span class="op">=</span><span class="va">None</span>, <span class="co"># neighborhood radius scheduler</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        shuffle:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span>, <span class="co"># shuffle data</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        verbose:<span class="bu">bool</span><span class="op">=</span><span class="va">True</span>, <span class="co"># verbose</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">**</span>kwargs <span class="co"># additional arguments</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        )<span class="op">-&gt;</span><span class="bu">tuple</span>: <span class="co"># tuple of weights, quantization errors, and topographic errors</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Train the SOM on input data X"</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.weights <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.weights <span class="op">=</span> <span class="va">self</span>._initialize_weights(X, <span class="va">self</span>.init)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> lr_scheduler <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        lr_scheduler <span class="op">=</span> Scheduler(<span class="fl">1.0</span>, <span class="fl">0.01</span>, <span class="dv">100</span>, <span class="bu">len</span>(X), n_epochs)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> sigma_scheduler <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        sigma_scheduler <span class="op">=</span> Scheduler(<span class="bu">max</span>(<span class="va">self</span>.grid_sz)<span class="op">/</span><span class="dv">2</span>, <span class="fl">1.0</span>, <span class="dv">100</span>, <span class="bu">len</span>(X), n_epochs)</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    qe_errors, te_errors <span class="op">=</span> [], []</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    epochs_data <span class="op">=</span> []</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    mb <span class="op">=</span> master_bar(<span class="bu">range</span>(n_epochs))</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Setup displays</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> verbose:</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        display_metrics <span class="op">=</span> display(HTML(<span class="st">''</span>), display_id<span class="op">=</span><span class="st">'metrics'</span>)</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>        fig, ax1, ax2 <span class="op">=</span> setup_error_plots(<span class="op">**</span>kwargs)</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>        display_plots <span class="op">=</span> display(fig, display_id<span class="op">=</span><span class="st">'plots'</span>)</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch <span class="kw">in</span> mb:</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>        X_ <span class="op">=</span> np.random.permutation(X) <span class="cf">if</span> shuffle <span class="cf">else</span> X.copy()</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, x <span class="kw">in</span> progress_bar(<span class="bu">enumerate</span>(X_), total<span class="op">=</span><span class="bu">len</span>(X_), parent<span class="op">=</span>mb):</span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>            total_samples <span class="op">=</span> epoch <span class="op">*</span> <span class="bu">len</span>(X) <span class="op">+</span> i</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>            lr <span class="op">=</span> lr_scheduler.step(total_samples)</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>            sigma <span class="op">=</span> sigma_scheduler.step(total_samples)</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._update_weights(x, lr, sigma)</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>        qe <span class="op">=</span> <span class="va">self</span>.quantization_error(X)</span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>        te <span class="op">=</span> <span class="va">self</span>.topographic_error(X)</span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>        qe_errors.append(qe)</span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>        te_errors.append(te)</span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> verbose:</span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>            epochs_data.append((epoch, qe, te))</span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>            display_metrics.update(HTML(format_metrics_html(epochs_data)))</span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>            update_error_plots(fig, ax1, ax2, </span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>                               <span class="bu">list</span>(<span class="bu">range</span>(epoch <span class="op">+</span> <span class="dv">1</span>)), </span>
+<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a>                               qe_errors, te_errors,</span>
+<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a>                               display_plots)</span>
+<span id="cb21-52"><a href="#cb21-52" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-53"><a href="#cb21-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> verbose: plt.close(fig)  <span class="co"># Close the figure at the end</span></span>
+<span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>.weights, qe_errors, te_errors</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L259" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="som.quantization_error" class="level3">
+<h3 class="anchored" data-anchor-id="som.quantization_error">SOM.quantization_error</h3>
+<blockquote class="blockquote">
+<pre><code> SOM.quantization_error (X:numpy.ndarray)</code></pre>
+</blockquote>
+<p><em>Calculate average distance between each input vector and its BMU</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>data matrix</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td><strong>quantization error</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-24" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> quantization_error(<span class="va">self</span>:SOM, </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                       X:np.ndarray <span class="co"># data matrix</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                       )<span class="op">-&gt;</span><span class="bu">float</span>: <span class="co"># quantization error</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Calculate average distance between each input vector and its BMU"</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array([</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dist_fn(x, <span class="va">self</span>.weights).<span class="bu">min</span>() </span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> x <span class="kw">in</span> X</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    ]).mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L270" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="som.topographic_error" class="level3">
+<h3 class="anchored" data-anchor-id="som.topographic_error">SOM.topographic_error</h3>
+<blockquote class="blockquote">
+<pre><code> SOM.topographic_error (X:numpy.ndarray)</code></pre>
+</blockquote>
+<p><em>Calculate proportion of data vectors where 1st and 2nd BMUs are not adjacent</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>data matrix</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td><strong>topographic error</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-26" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> topographic_error(<span class="va">self</span>:SOM, </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                      X:np.ndarray <span class="co"># data matrix</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                      )<span class="op">-&gt;</span><span class="bu">float</span>: <span class="co"># topographic error</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Calculate proportion of data vectors where 1st and 2nd BMUs are not adjacent"</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _check_bmu_adjacency(x):</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get indices of two best matching units</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        distances <span class="op">=</span> <span class="va">self</span>.dist_fn(x, <span class="va">self</span>.weights)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        flat_indices <span class="op">=</span> np.argpartition(distances.flatten(), <span class="dv">2</span>)[:<span class="dv">2</span>]</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>        indices <span class="op">=</span> np.unravel_index(flat_indices, <span class="va">self</span>.grid_sz)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check if any coordinate differs by more than 1</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">any</span>(np.<span class="bu">abs</span>(x<span class="op">-</span>y) <span class="op">&gt;</span> <span class="dv">1</span> <span class="cf">for</span> x,y <span class="kw">in</span> indices)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    n_errors <span class="op">=</span> <span class="bu">sum</span>(_check_bmu_adjacency(x) <span class="cf">for</span> x <span class="kw">in</span> X)</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">100</span> <span class="op">*</span> n_errors) <span class="op">/</span> <span class="bu">len</span>(X)  <span class="co"># Return percentage</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L287" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="som.transform" class="level3">
+<h3 class="anchored" data-anchor-id="som.transform">SOM.transform</h3>
+<blockquote class="blockquote">
+<pre><code> SOM.transform (X:numpy.ndarray)</code></pre>
+</blockquote>
+<p><em>Find Best Matching Unit (BMU) coordinates for each input vector</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>data matrix</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>ndarray</strong></td>
+<td><strong>bmu coordinates</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-28" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> transform(<span class="va">self</span>:SOM, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>              X:np.ndarray <span class="co"># data matrix</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>              )<span class="op">-&gt;</span>np.ndarray: <span class="co"># bmu coordinates</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Find Best Matching Unit (BMU) coordinates for each input vector"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    bmu_coords <span class="op">=</span> np.zeros((<span class="bu">len</span>(X), <span class="dv">2</span>), dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, x <span class="kw">in</span> <span class="bu">enumerate</span>(X):</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        bmu_coords[i] <span class="op">=</span> <span class="va">self</span>._find_bmu(x)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> bmu_coords</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L298" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="som.predict" class="level3">
+<h3 class="anchored" data-anchor-id="som.predict">SOM.predict</h3>
+<blockquote class="blockquote">
+<pre><code> SOM.predict (X:numpy.ndarray)</code></pre>
+</blockquote>
+<p><em>Alias for transform method to follow sklearn convention</em></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td>ndarray</td>
+<td>data matrix</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>ndarray</strong></td>
+<td><strong>bmu coordinates</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="cell-30" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span>  </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(<span class="va">self</span>:SOM, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>            X:np.ndarray <span class="co"># data matrix</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>            )<span class="op">-&gt;</span>np.ndarray: <span class="co"># bmu coordinates</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Alias for transform method to follow sklearn convention"</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>.transform(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L336" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="som.umatrix" class="level3">
+<h3 class="anchored" data-anchor-id="som.umatrix">SOM.umatrix</h3>
+<blockquote class="blockquote">
+<pre><code> SOM.umatrix ()</code></pre>
+</blockquote>
+<p><em>Return the U-Matrix for current weights</em></p>
+<div id="cell-32" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span>  </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _calculate_umatrix(<span class="va">self</span>:SOM)<span class="op">-&gt;</span>np.ndarray:</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Calculate U-Matrix values for current weights"</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _neighbor_distances(pos):</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Offsets for 8 neighbors</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>        nbr_offsets <span class="op">=</span> [</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>            (<span class="op">-</span><span class="dv">1</span>,<span class="op">-</span><span class="dv">1</span>), (<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>), (<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>),  <span class="co"># top-left, top, top-right</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">0</span>,<span class="op">-</span><span class="dv">1</span>),          (<span class="dv">0</span>,<span class="dv">1</span>),   <span class="co"># left, right</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span>,<span class="op">-</span><span class="dv">1</span>),  (<span class="dv">1</span>,<span class="dv">0</span>),  (<span class="dv">1</span>,<span class="dv">1</span>)    <span class="co"># bottom-left, bottom, bottom-right</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>        distances <span class="op">=</span> []</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>        weights <span class="op">=</span> []</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> dr, dc <span class="kw">in</span> nbr_offsets:</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>            r, c <span class="op">=</span> pos</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>            nbr_r, nbr_c <span class="op">=</span> r<span class="op">+</span>dr, c<span class="op">+</span>dc</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (nbr_r <span class="op">&gt;=</span> <span class="dv">0</span> <span class="kw">and</span> nbr_r <span class="op">&lt;</span> <span class="va">self</span>.grid_sz[<span class="dv">0</span>] <span class="kw">and</span> </span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>                nbr_c <span class="op">&gt;=</span> <span class="dv">0</span> <span class="kw">and</span> nbr_c <span class="op">&lt;</span> <span class="va">self</span>.grid_sz[<span class="dv">1</span>]):</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>                w <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>np.sqrt(dr<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> dc<span class="op">**</span><span class="dv">2</span>)  <span class="co"># weight by distance</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>                weights.append(w)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>                d <span class="op">=</span> <span class="va">self</span>.dist_fn(<span class="va">self</span>.weights[r,c], <span class="va">self</span>.weights[nbr_r,nbr_c])</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>                distances.append(d)</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.average(distances, weights<span class="op">=</span>weights)</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>    umatrix <span class="op">=</span> np.zeros(<span class="va">self</span>.grid_sz)</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, j <span class="kw">in</span> np.ndindex(<span class="va">self</span>.grid_sz):</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>        umatrix[i,j] <span class="op">=</span> _neighbor_distances((i,j))</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> umatrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-33" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> umatrix(<span class="va">self</span>:SOM)<span class="op">-&gt;</span>np.ndarray:</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Return the U-Matrix for current weights"</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>._calculate_umatrix()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<p><a href="https://github.com/franckalbinet/teuvo/blob/main/teuvo/core.py#L342" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="som.plot_umatrix" class="level3">
+<h3 class="anchored" data-anchor-id="som.plot_umatrix">SOM.plot_umatrix</h3>
+<blockquote class="blockquote">
+<pre><code> SOM.plot_umatrix (figsize=(8, 6), cmap='viridis_r')</code></pre>
+</blockquote>
+<p><em>Plot U-Matrix visualization</em></p>
+<div id="cell-35" class="cell">
+<details open="" class="code-fold">
+<summary>Exported source</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="at">@patch</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_umatrix(<span class="va">self</span>:SOM, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                 figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>), </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                 cmap<span class="op">=</span><span class="st">'viridis_r'</span>):</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Plot U-Matrix visualization"</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>figsize)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    plt.imshow(<span class="va">self</span>.umatrix(), cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'nearest'</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    plt.colorbar(label<span class="op">=</span><span class="st">'Average distance to neighbors'</span>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'U-Matrix'</span>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-36" class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load and normalize MNIST data</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_digits</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_digits(return_X_y<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>X_norm <span class="op">=</span> (X <span class="op">-</span> np.mean(X, axis<span class="op">=-</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>))<span class="op">/</span>X.<span class="bu">max</span>()</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create and train SOM</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>som <span class="op">=</span> SOM(grid_sz<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">20</span>), input_dim<span class="op">=</span><span class="dv">64</span>, init<span class="op">=</span><span class="st">'pca'</span>)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> som.fit(X_norm, n_epochs<span class="op">=</span><span class="dv">10</span>, verbose<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>som.plot_umatrix(figsize<span class="op">=</span>(<span class="dv">4</span>,<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+    <div style="font-family: monospace; margin: 10px">
+        <h4 class="anchored">Training Progress</h4>
+        
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<tbody>
+<tr class="odd" style="border-bottom: 2px solid #ddd">
+<td data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold; padding: 5px;">Epoch</td>
+<td data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; padding: 5px;">QE</td>
+<td data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; padding: 5px;">TE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 3px;">1</td>
+<td style="text-align: right; padding: 3px;">1.9729</td>
+<td style="text-align: right; padding: 3px;">2.7268</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 3px;">2</td>
+<td style="text-align: right; padding: 3px;">1.8512</td>
+<td style="text-align: right; padding: 3px;">1.5025</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 3px;">3</td>
+<td style="text-align: right; padding: 3px;">1.7220</td>
+<td style="text-align: right; padding: 3px;">0.7234</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 3px;">4</td>
+<td style="text-align: right; padding: 3px;">1.5898</td>
+<td style="text-align: right; padding: 3px;">0.4452</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 3px;">5</td>
+<td style="text-align: right; padding: 3px;">1.4855</td>
+<td style="text-align: right; padding: 3px;">0.5565</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 3px;">6</td>
+<td style="text-align: right; padding: 3px;">1.3933</td>
+<td style="text-align: right; padding: 3px;">0.6678</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 3px;">7</td>
+<td style="text-align: right; padding: 3px;">1.3253</td>
+<td style="text-align: right; padding: 3px;">0.2782</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 3px;">8</td>
+<td style="text-align: right; padding: 3px;">1.2618</td>
+<td style="text-align: right; padding: 3px;">0.3895</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 3px;">9</td>
+<td style="text-align: right; padding: 3px;">1.2168</td>
+<td style="text-align: right; padding: 3px;">0.3339</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 3px;">10</td>
+<td style="text-align: right; padding: 3px;">1.1855</td>
+<td style="text-align: right; padding: 3px;">0.4452</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+    
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="00_core_files/figure-html/cell-36-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="00_core_files/figure-html/cell-36-output-5.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/franckalbinet\.github\.io\/teuvo");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/franckalbinet/teuvo/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
