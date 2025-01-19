@@ -24,4 +24,7 @@ d = { 'settings': { 'branch': 'main',
                             'teuvo.core.Scheduler': ('core.html#scheduler', 'teuvo/core.py'),
                             'teuvo.core.Scheduler.__init__': ('core.html#scheduler.__init__', 'teuvo/core.py'),
                             'teuvo.core.Scheduler.step': ('core.html#scheduler.step', 'teuvo/core.py'),
-                            'teuvo.core.exp_sched': ('core.html#exp_sched', 'teuvo/core.py')}}}
+                            'teuvo.core.exp_sched': ('core.html#exp_sched', 'teuvo/core.py'),
+                            'teuvo.core.format_metrics_html': ('core.html#format_metrics_html', 'teuvo/core.py'),
+                            'teuvo.core.setup_error_plots': ('core.html#setup_error_plots', 'teuvo/core.py'),
+                            'teuvo.core.update_error_plots': ('core.html#update_error_plots', 'teuvo/core.py')}}}

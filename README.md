@@ -34,6 +34,11 @@ also deeply understood.
 - Flexible training options:
   - Customizable learning rate schedules
   - Adjustable neighborhood functions
+  - Quantization and Topographic Errors monitoring plots during
+    training:
+
+![](./img/som-training-in-action.gif)
+
 - Comprehensive quality metrics:
   - Quantization Error
   - Topographic Error
@@ -60,34 +65,62 @@ X_norm = (X - np.mean(X, axis=-1, keepdims=True))/X.max()
 
 # Create and train SOM
 som = SOM(grid_sz=(20,20), input_dim=64, init='pca')
-som.fit(X_norm, n_epochs=20)
+som.fit(X_norm, n_epochs=20, verbose=True)
 
 # Visualize results
 som.plot_umatrix(figsize=(4,4))
 ```
 
-    Epoch: 1 | QE: 2.1372, TE: 2.6711
-    Epoch: 2 | QE: 1.9623, TE: 1.6694
-    Epoch: 3 | QE: 1.8921, TE: 2.2259
-    Epoch: 4 | QE: 1.8032, TE: 1.7251
-    Epoch: 5 | QE: 1.7636, TE: 2.0590
-    Epoch: 6 | QE: 1.7209, TE: 1.0017
-    Epoch: 7 | QE: 1.6793, TE: 1.8920
-    Epoch: 8 | QE: 1.5912, TE: 0.9460
-    Epoch: 9 | QE: 1.5495, TE: 1.0017
-    Epoch: 10 | QE: 1.4944, TE: 0.7234
-    Epoch: 11 | QE: 1.4378, TE: 0.3895
-    Epoch: 12 | QE: 1.3935, TE: 0.4452
-    Epoch: 13 | QE: 1.3453, TE: 0.2226
-    Epoch: 14 | QE: 1.3103, TE: 0.2782
-    Epoch: 15 | QE: 1.2762, TE: 0.5565
-    Epoch: 16 | QE: 1.2435, TE: 0.2226
-    Epoch: 17 | QE: 1.2154, TE: 0.1113
-    Epoch: 18 | QE: 1.1908, TE: 0.3339
-    Epoch: 19 | QE: 1.1702, TE: 0.2226
-    Epoch: 20 | QE: 1.1529, TE: 0.4452
+    <div style="font-family: monospace; margin: 10px">
+        <h4>Training Progress</h4>
+        &#10;
+
+|       |        |        |
+|:------|-------:|-------:|
+| Epoch |     QE |     TE |
+| 1     | 2.0001 | 2.0590 |
+| 2     | 1.9462 | 4.7301 |
+| 3     | 1.8539 | 0.6121 |
+| 4     | 1.8458 | 1.5582 |
+| 5     | 1.7964 | 1.8364 |
+| 6     | 1.7228 | 0.7791 |
+| 7     | 1.6385 | 0.4452 |
+| 8     | 1.5939 | 0.3339 |
+| 9     | 1.5624 | 0.3339 |
+| 10    | 1.4959 | 0.5565 |
+| 11    | 1.4390 | 0.6121 |
+| 12    | 1.3935 | 0.6678 |
+| 13    | 1.3539 | 0.6678 |
+| 14    | 1.3116 | 0.8904 |
+| 15    | 1.2758 | 1.0017 |
+| 16    | 1.2444 | 0.7234 |
+| 17    | 1.2162 | 0.7234 |
+| 18    | 1.1915 | 0.7234 |
+| 19    | 1.1701 | 0.8347 |
+| 20    | 1.1523 | 0.6678 |
+
+    </div>
+    &#10;
 
 ![](index_files/figure-commonmark/cell-2-output-2.png)
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+![](index_files/figure-commonmark/cell-2-output-5.png)
 
 ## Detailed Example: MNIST Digit Classification
 
@@ -117,52 +150,61 @@ sigma_scheduler = Scheduler(start_val=10.0, end_val=1.0,
 # Train
 weights, qe_errors, te_errors = som.fit(
     X_norm,
-    n_epochs=20,
+    n_epochs=15,
     lr_scheduler=lr_scheduler,
     sigma_scheduler=sigma_scheduler
 )
-
-# Visualize results
-plt.figure(figsize=(12,4))
-
-plt.subplot(121)
-plt.plot(qe_errors)
-plt.title('Quantization Error')
-plt.xlabel('Epoch')
-
-plt.subplot(122)
-plt.plot(te_errors)
-plt.title('Topographic Error')
-plt.xlabel('Epoch')
-
-som.plot_umatrix(figsize=(4,4))
-plt.tight_layout();
 ```
 
-    Epoch: 1 | QE: 2.1752, TE: 2.8381
-    Epoch: 2 | QE: 2.0267, TE: 2.3929
-    Epoch: 3 | QE: 1.8967, TE: 1.7251
-    Epoch: 4 | QE: 1.8424, TE: 1.6694
-    Epoch: 5 | QE: 1.7378, TE: 0.3895
-    Epoch: 6 | QE: 1.6918, TE: 1.1130
-    Epoch: 7 | QE: 1.6636, TE: 1.6694
-    Epoch: 8 | QE: 1.6096, TE: 1.2243
-    Epoch: 9 | QE: 1.5562, TE: 0.7234
-    Epoch: 10 | QE: 1.4827, TE: 0.7234
-    Epoch: 11 | QE: 1.4276, TE: 0.4452
-    Epoch: 12 | QE: 1.3930, TE: 0.4452
-    Epoch: 13 | QE: 1.3489, TE: 0.6121
-    Epoch: 14 | QE: 1.3121, TE: 0.5565
-    Epoch: 15 | QE: 1.2779, TE: 0.2782
-    Epoch: 16 | QE: 1.2442, TE: 0.5008
-    Epoch: 17 | QE: 1.2142, TE: 0.5565
-    Epoch: 18 | QE: 1.1886, TE: 0.3895
-    Epoch: 19 | QE: 1.1671, TE: 0.6678
-    Epoch: 20 | QE: 1.1492, TE: 1.0017
+    <div style="font-family: monospace; margin: 10px">
+        <h4>Training Progress</h4>
+        &#10;
+
+|       |        |        |
+|:------|-------:|-------:|
+| Epoch |     QE |     TE |
+| 1     | 1.9399 | 1.3912 |
+| 2     | 2.0015 | 1.6694 |
+| 3     | 1.9254 | 2.7824 |
+| 4     | 1.7919 | 0.6121 |
+| 5     | 1.7639 | 1.1686 |
+| 6     | 1.7188 | 0.7791 |
+| 7     | 1.6138 | 0.6121 |
+| 8     | 1.5829 | 0.4452 |
+| 9     | 1.5376 | 0.2782 |
+| 10    | 1.4790 | 0.5008 |
+| 11    | 1.4333 | 0.3339 |
+| 12    | 1.3924 | 0.3895 |
+| 13    | 1.3472 | 1.0017 |
+| 14    | 1.3150 | 0.2782 |
+| 15    | 1.2801 | 0.3895 |
+
+    </div>
+    &#10;
 
 ![](index_files/figure-commonmark/cell-3-output-2.png)
 
-![](index_files/figure-commonmark/cell-3-output-3.png)
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+``` python
+som.plot_umatrix(figsize=(4,4))
+```
+
+![](index_files/figure-commonmark/cell-4-output-1.png)
 
 ## Contributing
 
